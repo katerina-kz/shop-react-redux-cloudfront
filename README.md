@@ -15,8 +15,8 @@ This is frontend starter project for nodejs-aws mentoring program. It uses the f
 - [Eslint](https://eslint.org/) as a code linting tool
 - [Prettier](https://prettier.io/) as a code formatting tool
 - [TypeScript](https://www.typescriptlang.org/) as a type checking tool
-- [S3-website](http://react-redux-shop.s3-website-us-east-1.amazonaws.com/) as a Task 2.3
-- [CloudFront](http://d2h3wx2ljzn6va.cloudfront.net/) as a Task 2.2
+- [S3-website](http://electronic-shop-app.s3-website-us-east-1.amazonaws.com) as a Task 2.3 - access forbidden due to bucket policy
+- [CloudFront](https://d201bm3zznl0bd.cloudfront.net/) as a Task 2.3
 
 ## Available Scripts
 
