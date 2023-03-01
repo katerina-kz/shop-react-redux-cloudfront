@@ -11,7 +11,8 @@ export function useAvailableProducts() {
       try {
         const products = await axios
           .get(`${API_PATHS.bff}/products`)
-          .then((res) => res.data.products);
+          .then((res) => res.data);
+        console.log(products);
         return products;
       } catch (error) {
         console.log(error);
