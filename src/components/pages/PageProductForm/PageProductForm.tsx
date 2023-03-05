@@ -39,6 +39,10 @@ export default function PageProductForm() {
     });
   };
 
+  if (!data) {
+    return <Typography variant="h2">Product not found...</Typography>;
+  }
+
   return (
     <PaperLayout>
       <Typography component="h1" variant="h4" align="center" mb={2}>
