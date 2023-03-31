@@ -4,28 +4,34 @@ import CartIcon from "@mui/icons-material/ShoppingCart";
 import Add from "@mui/icons-material/Add";
 import Remove from "@mui/icons-material/Remove";
 import IconButton from "@mui/material/IconButton";
-import { useCart, useInvalidateCart, useUpsertCart } from "~/queries/cart";
+import {
+  useInvalidateCart,
+  useProductsCart,
+  useUpsertCart,
+} from "~/queries/cart";
+import { useCombinedProductCart } from "~/hooks/useCombinedProductCart";
 
 type AddProductToCartProps = {
   product: Product;
 };
 
 export default function AddProductToCart({ product }: AddProductToCartProps) {
-  const { data = [], isFetching } = useCart();
+  const { data = [], isFetching } = useProductsCart();
   const { mutate: upsertCart } = useUpsertCart();
   const invalidateCart = useInvalidateCart();
-  const cartItem = data.find((i) => i.product.id === product.id);
+  const cartItem = data?.data?.data?.items.find((i) => i.product_id === product.id);
 
-  const addProduct = () => {
-    upsertCart(
+  const addProduct = async () => {
+    await upsertCart(
       { product, count: cartItem ? cartItem.count + 1 : 1 },
       { onSuccess: invalidateCart }
     );
   };
 
-  const removeProduct = () => {
+  const removeProduct = async () => {
+    console.log(cartItem.count);
     if (cartItem) {
-      upsertCart(
+      await upsertCart(
         { ...cartItem, count: cartItem.count - 1 },
         { onSuccess: invalidateCart }
       );
