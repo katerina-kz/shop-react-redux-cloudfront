@@ -9,7 +9,6 @@ import {
   useProductsCart,
   useUpsertCart,
 } from "~/queries/cart";
-import { useCombinedProductCart } from "~/hooks/useCombinedProductCart";
 
 type AddProductToCartProps = {
   product: Product;
@@ -19,7 +18,7 @@ export default function AddProductToCart({ product }: AddProductToCartProps) {
   const { data = [], isFetching } = useProductsCart();
   const { mutate: upsertCart } = useUpsertCart();
   const invalidateCart = useInvalidateCart();
-  const cartItem = data?.data?.data?.items.find((i) => i.product_id === product.id);
+  const cartItem = data?.items.find((i: any) => i.product_id === product.id);
 
   const addProduct = async () => {
     await upsertCart(
@@ -29,10 +28,9 @@ export default function AddProductToCart({ product }: AddProductToCartProps) {
   };
 
   const removeProduct = async () => {
-    console.log(cartItem.count);
     if (cartItem) {
       await upsertCart(
-        { ...cartItem, count: cartItem.count - 1 },
+        { product, count: cartItem.count - 1 },
         { onSuccess: invalidateCart }
       );
     }

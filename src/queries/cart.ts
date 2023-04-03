@@ -7,12 +7,21 @@ import { CartItem } from "~/models/CartItem";
 const mockedQueryID = "3873f8b8-63e4-405b-b338-cd734b74a59c";
 
 export function useProductsCart() {
-  return useQuery("cart-product", () => {
-    return axios.get(`${API_PATHS.cart}/api/profile/cart/${mockedQueryID}`, {
-      headers: {
-        Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
-      },
-    });
+  return useQuery("cart-product", async () => {
+    try {
+      const cart = await axios
+        .get(`${API_PATHS.cart}/api/profile/cart/${mockedQueryID}`, {
+          headers: {
+            Authorization: `Basic ${localStorage.getItem(
+              "authorization_token"
+            )}`,
+          },
+        })
+        .then((res) => res.data.data);
+      return cart;
+    } catch (error) {
+      console.log(error);
+    }
   });
 }
 
@@ -31,7 +40,7 @@ export function useInvalidateCart() {
 
 export function useUpsertCart() {
   return useMutation((values: CartItem) => {
-    console.log(values);
+    console.log("values: ", values);
     return axios.put<CartItem[]>(
       `${API_PATHS.cart}/api/profile/cart/${mockedQueryID}`,
       values,

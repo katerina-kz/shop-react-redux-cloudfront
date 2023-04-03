@@ -6,9 +6,7 @@ import { useProductsCart } from "~/queries/cart";
 
 export default function Cart() {
   const { data = [] } = useProductsCart();
-
-
-  const badgeContent = data.length || undefined;
+  const badgeContent = data.items?.length || undefined;
 
   return (
     <IconButton color="inherit" component={Link} to="/cart" size="large">

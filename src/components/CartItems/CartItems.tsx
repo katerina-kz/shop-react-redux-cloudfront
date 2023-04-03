@@ -12,8 +12,7 @@ type CartItemsProps = {
 };
 
 export default function CartItems({ items, isEditable }: CartItemsProps) {
-  console.log(items);
-  const totalPrice: number = items.items.reduce(
+  const totalPrice: number = items?.reduce(
     (total, item) => item.count * item.product.price + total,
     0
   );

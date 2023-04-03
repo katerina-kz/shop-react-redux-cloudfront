@@ -9,13 +9,15 @@ import ReviewOrder from "~/components/pages/PageCart/components/ReviewOrder";
 import PaperLayout from "~/components/PaperLayout/PaperLayout";
 import { Address, AddressSchema, Order } from "~/models/Order";
 import Box from "@mui/material/Box";
-import { useCartData, useInvalidateCart, useProductsCart } from "~/queries/cart";
-import AddressForm from "~/components/pages/PageCart/components/AddressForm";
 import {
-  useSubmitOrder,
-} from "~/queries/orders";
+  useCartData,
+  useInvalidateCart,
+  useProductsCart,
+} from "~/queries/cart";
+import AddressForm from "~/components/pages/PageCart/components/AddressForm";
+import { useSubmitOrder } from "~/queries/orders";
 import { useCombinedProductCart } from "~/hooks/useCombinedProductCart";
-
+import { useAvailableProducts } from "~/queries/products";
 
 enum CartStep {
   ReviewCart,
@@ -47,8 +49,7 @@ const Success = () => (
 const steps = ["Review your cart", "Shipping address", "Review your order"];
 
 export default function PageCart() {
-  const data = useCombinedProductCart();
-  console.log("data: ", data);
+  const { combinedData, isLoading } = useCombinedProductCart();
 
   const { mutate: submitOrder } = useSubmitOrder();
   const invalidateCart = useInvalidateCart();
@@ -57,7 +58,7 @@ export default function PageCart() {
   );
   const [address, setAddress] = useState<Address>(initialAddressValues);
 
-  const isCartEmpty = data.items.length === 0;
+  const isCartEmpty = isLoading && combinedData?.length === 0;
 
   const handleNext = () => {
     if (activeStep !== CartStep.ReviewOrder) {
@@ -65,7 +66,7 @@ export default function PageCart() {
       return;
     }
     const values = {
-      items: data.items.map((i) => ({
+      items: combinedData.map((i: any) => ({
         productId: i.product.id,
         count: i.count,
       })),
@@ -105,8 +106,8 @@ export default function PageCart() {
         ))}
       </Stepper>
       {isCartEmpty && <CartIsEmpty />}
-      {!isCartEmpty && activeStep === CartStep.ReviewCart && (
-        <ReviewCart items={data} />
+      {!isCartEmpty && !isLoading && activeStep === CartStep.ReviewCart && (
+        <ReviewCart items={combinedData} />
       )}
       {activeStep === CartStep.Address && (
         <AddressForm
@@ -116,7 +117,7 @@ export default function PageCart() {
         />
       )}
       {activeStep === CartStep.ReviewOrder && (
-        <ReviewOrder address={address} items={data} />
+        <ReviewOrder address={address} items={combinedData} />
       )}
       {activeStep === CartStep.Success && <Success />}
       {!isCartEmpty &&

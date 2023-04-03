@@ -3,7 +3,6 @@ import API_PATHS from "~/constants/apiPaths";
 import { AvailableProduct } from "~/models/Product";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import React from "react";
-import { CartItem } from "~/models/CartItem";
 
 export function useAvailableProducts() {
   return useQuery<AvailableProduct[], AxiosError>(
