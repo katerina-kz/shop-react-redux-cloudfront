@@ -52,3 +52,15 @@ export function useUpsertCart() {
     );
   });
 }
+
+export function useDeleteCartItem() {
+  return useMutation(async (productId: string) => {
+    try {
+      return await axios
+        .delete(`${API_PATHS.cart}/api/profile/cart/${productId}`)
+        .then((res) => res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+}

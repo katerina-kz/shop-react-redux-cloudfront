@@ -5,6 +5,7 @@ import Add from "@mui/icons-material/Add";
 import Remove from "@mui/icons-material/Remove";
 import IconButton from "@mui/material/IconButton";
 import {
+  useDeleteCartItem,
   useInvalidateCart,
   useProductsCart,
   useUpsertCart,
@@ -17,8 +18,9 @@ type AddProductToCartProps = {
 export default function AddProductToCart({ product }: AddProductToCartProps) {
   const { data = [], isFetching } = useProductsCart();
   const { mutate: upsertCart } = useUpsertCart();
+  const { mutate: deleteCartItem } = useDeleteCartItem();
   const invalidateCart = useInvalidateCart();
-  const cartItem = data?.items.find((i: any) => i.product_id === product.id);
+  const cartItem = data?.items?.find((i: any) => i.product_id === product.id);
 
   const addProduct = async () => {
     await upsertCart(
@@ -29,6 +31,12 @@ export default function AddProductToCart({ product }: AddProductToCartProps) {
 
   const removeProduct = async () => {
     if (cartItem) {
+      const itemAmount = cartItem.count - 1;
+      if (!itemAmount) {
+        return await deleteCartItem(cartItem.product_id, {
+          onSuccess: invalidateCart,
+        });
+      }
       await upsertCart(
         { product, count: cartItem.count - 1 },
         { onSuccess: invalidateCart }
