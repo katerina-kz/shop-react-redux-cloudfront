@@ -12,6 +12,7 @@ export const useCombinedProductCart = () => {
       cart.push({
         count: item.count,
         product,
+        cartId: carts.id,
       });
     }
     return cart;

@@ -1,12 +1,9 @@
 import React from "react";
-import { Order, OrderItem } from "~/models/Order";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import PaperLayout from "~/components/PaperLayout/PaperLayout";
 import Typography from "@mui/material/Typography";
 import API_PATHS from "~/constants/apiPaths";
 import { CartItem } from "~/models/CartItem";
-import { AvailableProduct } from "~/models/Product";
 import ReviewOrder from "~/components/pages/PageCart/components/ReviewOrder";
 import { OrderStatus, ORDER_STATUS_FLOW } from "~/constants/order";
 import Button from "@mui/material/Button";
@@ -21,8 +18,11 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import Box from "@mui/material/Box";
-import { useQueries } from "react-query";
-import { useInvalidateOrder, useUpdateOrderStatus } from "~/queries/orders";
+import {
+  useInvalidateOrder,
+  useOrder,
+  useUpdateOrderStatus,
+} from "~/queries/orders";
 
 type FormValues = {
   status: OrderStatus;
@@ -31,44 +31,12 @@ type FormValues = {
 
 export default function PageOrder() {
   const { id } = useParams<{ id: string }>();
-  const results = useQueries([
-    {
-      queryKey: ["order", { id }],
-      queryFn: async () => {
-        const res = await axios.get<Order>(`${API_PATHS.order}/order/${id}`);
-        return res.data;
-      },
-    },
-    {
-      queryKey: "products",
-      queryFn: async () => {
-        const res = await axios.get<AvailableProduct[]>(
-          `${API_PATHS.bff}/products`
-        );
-        return res.data;
-      },
-    },
-  ]);
-  const [
-    { data: order, isLoading: isOrderLoading },
-    { data: products, isLoading: isProductsLoading },
-  ] = results;
+  const { data: order, isLoading: isOrderLoading } = useOrder(id);
+
   const { mutateAsync: updateOrderStatus } = useUpdateOrderStatus();
   const invalidateOrder = useInvalidateOrder();
-  const cartItems: CartItem[] = React.useMemo(() => {
-    if (order && products) {
-      return order.items.map((item: OrderItem) => {
-        const product = products.find((p) => p.id === item.productId);
-        if (!product) {
-          throw new Error("Product not found");
-        }
-        return { product, count: item.count };
-      });
-    }
-    return [];
-  }, [order, products]);
 
-  if (isOrderLoading || isProductsLoading) return <p>loading...</p>;
+  if (isOrderLoading) return <p>loading...</p>;
 
   const statusHistory = order?.statusHistory || [];
 
@@ -79,7 +47,7 @@ export default function PageOrder() {
       <Typography component="h1" variant="h4" align="center">
         Manage order
       </Typography>
-      <ReviewOrder address={order.address} items={cartItems} />
+      <ReviewOrder address={order.address} items={undefined} order={order} />
       <Typography variant="h6">Status:</Typography>
       <Typography variant="h6" color="primary">
         {lastStatusItem?.status.toUpperCase()}
@@ -155,7 +123,7 @@ export default function PageOrder() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {statusHistory.map((statusHistoryItem) => (
+            {statusHistory.map((statusHistoryItem: any) => (
               <TableRow key={order.id}>
                 <TableCell component="th" scope="row">
                   {statusHistoryItem.status.toUpperCase()}

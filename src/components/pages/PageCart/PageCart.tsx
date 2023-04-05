@@ -71,9 +71,12 @@ export default function PageCart() {
         count: i.count,
       })),
       address,
+      cart_id: combinedData[0].cartId,
     };
 
-    submitOrder(values as Omit<Order, "id">, {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    submitOrder(values, {
       onSuccess: () => {
         setActiveStep(activeStep + 1);
         invalidateCart();

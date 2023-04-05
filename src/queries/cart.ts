@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import React from "react";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import API_PATHS from "~/constants/apiPaths";
@@ -40,7 +40,6 @@ export function useInvalidateCart() {
 
 export function useUpsertCart() {
   return useMutation((values: CartItem) => {
-    console.log("values: ", values);
     return axios.put<CartItem[]>(
       `${API_PATHS.cart}/api/profile/cart/${mockedQueryID}`,
       values,

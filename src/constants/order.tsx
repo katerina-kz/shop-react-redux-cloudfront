@@ -3,7 +3,7 @@ export enum OrderStatus {
   Approved = "APPROVED",
   Confirmed = "CONFIRMED",
   Sent = "SENT",
-  Completed = "COMPLETED",
+  Ordered = "ORDERED",
   Cancelled = "CANCELLED",
 }
 
