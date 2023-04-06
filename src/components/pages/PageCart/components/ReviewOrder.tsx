@@ -8,7 +8,7 @@ import { CartItem } from "~/models/CartItem";
 
 type ReviewOrderProps = {
   address: FormikValues;
-  items: CartItem[];
+  items: CartItem[] | undefined;
   order?: any;
 };
 
