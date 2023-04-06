@@ -1,14 +1,36 @@
 import axios, { AxiosError } from "axios";
 import React from "react";
-import { useQuery, useQueryClient, useMutation } from "react-query";
+import { useQuery, useQueryClient, useMutation, useQueries } from "react-query";
 import API_PATHS from "~/constants/apiPaths";
 import { OrderStatus } from "~/constants/order";
-import { Order } from "~/models/Order";
+
+const mockedQueryID = "3873f8b8-63e4-405b-b338-cd734b74a59c";
 
 export function useOrders() {
-  return useQuery<Order[], AxiosError>("orders", async () => {
-    const res = await axios.get<Order[]>(`${API_PATHS.order}/order`);
-    return res.data;
+  return useQuery("orders", async () => {
+    try {
+      const orders = await axios
+        .get(`${API_PATHS.order}/orders/${mockedQueryID}`)
+        .then((res) => res?.data?.data);
+
+      return orders;
+    } catch (error) {
+      console.log(error);
+    }
+  });
+}
+
+export function useOrder(id: string | undefined) {
+  return useQuery("order", async () => {
+    try {
+      const order = await axios
+        .get(`${API_PATHS.order}/orders/order/${id}`)
+        .then((res) => res?.data?.data);
+
+      return order;
+    } catch (error) {
+      console.log(error);
+    }
   });
 }
 
@@ -24,7 +46,7 @@ export function useUpdateOrderStatus() {
   return useMutation(
     (values: { id: string; status: OrderStatus; comment: string }) => {
       const { id, ...data } = values;
-      return axios.put(`${API_PATHS.order}/order/${id}/status`, data, {
+      return axios.put(`${API_PATHS.order}/orders/order/${id}/status`, data, {
         headers: {
           Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
         },
@@ -34,8 +56,9 @@ export function useUpdateOrderStatus() {
 }
 
 export function useSubmitOrder() {
-  return useMutation((values: Omit<Order, "id">) => {
-    return axios.put<Omit<Order, "id">>(`${API_PATHS.order}/order`, values, {
+  return useMutation((values) => {
+    console.log(values);
+    return axios.post(`${API_PATHS.order}/orders/${mockedQueryID}`, values, {
       headers: {
         Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
       },
@@ -54,7 +77,7 @@ export function useInvalidateOrder() {
 
 export function useDeleteOrder() {
   return useMutation((id: string) =>
-    axios.delete(`${API_PATHS.order}/order/${id}`, {
+    axios.delete(`${API_PATHS.order}/orders/delete/${id}`, {
       headers: {
         Authorization: `Basic ${localStorage.getItem("authorization_token")}`,
       },

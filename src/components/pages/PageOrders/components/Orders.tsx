@@ -15,6 +15,7 @@ import {
 
 export default function Orders() {
   const { data } = useOrders();
+
   const invalidateOrders = useInvalidateOrders();
   const { mutate: deleteOrder } = useDeleteOrder();
 
@@ -31,7 +32,7 @@ export default function Orders() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data?.map((order) => (
+          {data?.map((order: any) => (
             <TableRow key={order.id}>
               <TableCell component="th" scope="row">
                 {order.address?.firstName} {order.address?.lastName}

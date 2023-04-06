@@ -1,21 +1,32 @@
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
+import React from "react";
+import { useOrderProduct } from "~/hooks/useOrderProduct";
 import CartItems from "~/components/CartItems/CartItems";
 import { FormikValues } from "formik";
 import { CartItem } from "~/models/CartItem";
 
 type ReviewOrderProps = {
   address: FormikValues;
-  items: CartItem[];
+  items: CartItem[] | undefined;
+  order?: any;
 };
 
-export default function ReviewOrder({ address, items }: ReviewOrderProps) {
+export default function ReviewOrder({
+  address,
+  items,
+  order,
+}: ReviewOrderProps) {
+  const { combinedData, isLoading } = useOrderProduct(order);
+
+  if (isLoading) return <p>loading...</p>;
+
   return (
     <>
       <Typography variant="h6" gutterBottom>
         Order summary
       </Typography>
-      <CartItems items={items} isEditable={false} />
+      <CartItems items={items || combinedData} isEditable={false} />
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>

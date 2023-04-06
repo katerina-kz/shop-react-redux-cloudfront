@@ -12,7 +12,6 @@ export function useAvailableProducts() {
         const products = await axios
           .get(`${API_PATHS.bff}/products`)
           .then((res) => res.data);
-        console.log(products);
         return products;
       } catch (error) {
         console.log(error);
@@ -27,6 +26,11 @@ export function useInvalidateAvailableProducts() {
     () => queryClient.invalidateQueries("available-products", { exact: true }),
     []
   );
+}
+
+export function useProductData() {
+  const queryClient = useQueryClient();
+  return queryClient.getQueryData("available-products");
 }
 
 export function useAvailableProduct(id?: string) {
