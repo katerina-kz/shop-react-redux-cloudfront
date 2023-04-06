@@ -29,7 +29,7 @@ export const orders: Order[] = [
     items: [{ productId: "7567ec4b-b10c-48c5-9345-fc73c48a80aa", count: 3 }],
     statusHistory: [
       {
-        status: OrderStatus.Sent,
+        status: OrderStatus.Ordered,
         timestamp: Date.now(),
         comment: "Fancy order",
       },
